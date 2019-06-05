@@ -6,7 +6,7 @@
 #
 Name     : compat-icu4c-soname63
 Version  : 63.1
-Release  : 23
+Release  : 24
 URL      : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
 Source99 : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz.asc
@@ -18,6 +18,11 @@ Requires: compat-icu4c-soname63-lib = %{version}-%{release}
 Requires: compat-icu4c-soname63-license = %{version}-%{release}
 Requires: compat-icu4c-soname63-man = %{version}-%{release}
 BuildRequires : doxygen
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
 BuildRequires : pkg-config
 BuildRequires : sed
 
@@ -58,6 +63,17 @@ Requires: compat-icu4c-soname63 = %{version}-%{release}
 dev components for the compat-icu4c-soname63 package.
 
 
+%package dev32
+Summary: dev32 components for the compat-icu4c-soname63 package.
+Group: Default
+Requires: compat-icu4c-soname63-lib32 = %{version}-%{release}
+Requires: compat-icu4c-soname63-data = %{version}-%{release}
+Requires: compat-icu4c-soname63-dev = %{version}-%{release}
+
+%description dev32
+dev32 components for the compat-icu4c-soname63 package.
+
+
 %package lib
 Summary: lib components for the compat-icu4c-soname63 package.
 Group: Libraries
@@ -66,6 +82,16 @@ Requires: compat-icu4c-soname63-license = %{version}-%{release}
 
 %description lib
 lib components for the compat-icu4c-soname63 package.
+
+
+%package lib32
+Summary: lib32 components for the compat-icu4c-soname63 package.
+Group: Default
+Requires: compat-icu4c-soname63-data = %{version}-%{release}
+Requires: compat-icu4c-soname63-license = %{version}-%{release}
+
+%description lib32
+lib32 components for the compat-icu4c-soname63 package.
 
 
 %package license
@@ -86,13 +112,16 @@ man components for the compat-icu4c-soname63 package.
 
 %prep
 %setup -q -n icu
+pushd ..
+cp -a icu build32
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1559759166
+export SOURCE_DATE_EPOCH=1559760592
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$CFLAGS -fno-lto "
 export FFLAGS="$CFLAGS -fno-lto "
@@ -102,11 +131,29 @@ pushd source
 make  %{?_smp_mflags}
 popd
 
+pushd ../build32/source
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
+%configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+make  %{?_smp_mflags}
+popd
 %install
-export SOURCE_DATE_EPOCH=1559759166
+export SOURCE_DATE_EPOCH=1559760592
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63
 cp license.html %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63/license.html
+pushd ../build32/source
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+popd
 pushd source
 %make_install
 popd
@@ -116,6 +163,11 @@ rm -rf %{buildroot}/usr/bin
 
 %files
 %defattr(-,root,root,-)
+%exclude /usr/lib32/icu/63.1/Makefile.inc
+%exclude /usr/lib32/icu/63.1/pkgdata.inc
+%exclude /usr/lib32/icu/Makefile.inc
+%exclude /usr/lib32/icu/current
+%exclude /usr/lib32/icu/pkgdata.inc
 %exclude /usr/lib64/icu/63.1/Makefile.inc
 %exclude /usr/lib64/icu/63.1/pkgdata.inc
 %exclude /usr/lib64/icu/Makefile.inc
@@ -324,6 +376,21 @@ rm -rf %{buildroot}/usr/bin
 %exclude /usr/lib64/pkgconfig/icu-io.pc
 %exclude /usr/lib64/pkgconfig/icu-uc.pc
 
+%files dev32
+%defattr(-,root,root,-)
+%exclude /usr/lib32/libicudata.so
+%exclude /usr/lib32/libicui18n.so
+%exclude /usr/lib32/libicuio.so
+%exclude /usr/lib32/libicutest.so
+%exclude /usr/lib32/libicutu.so
+%exclude /usr/lib32/libicuuc.so
+%exclude /usr/lib32/pkgconfig/32icu-i18n.pc
+%exclude /usr/lib32/pkgconfig/32icu-io.pc
+%exclude /usr/lib32/pkgconfig/32icu-uc.pc
+%exclude /usr/lib32/pkgconfig/icu-i18n.pc
+%exclude /usr/lib32/pkgconfig/icu-io.pc
+%exclude /usr/lib32/pkgconfig/icu-uc.pc
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libicudata.so.63
@@ -338,6 +405,21 @@ rm -rf %{buildroot}/usr/bin
 /usr/lib64/libicutu.so.63.1
 /usr/lib64/libicuuc.so.63
 /usr/lib64/libicuuc.so.63.1
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libicudata.so.63
+/usr/lib32/libicudata.so.63.1
+/usr/lib32/libicui18n.so.63
+/usr/lib32/libicui18n.so.63.1
+/usr/lib32/libicuio.so.63
+/usr/lib32/libicuio.so.63.1
+/usr/lib32/libicutest.so.63
+/usr/lib32/libicutest.so.63.1
+/usr/lib32/libicutu.so.63
+/usr/lib32/libicutu.so.63.1
+/usr/lib32/libicuuc.so.63
+/usr/lib32/libicuuc.so.63.1
 
 %files license
 %defattr(0644,root,root,0755)
