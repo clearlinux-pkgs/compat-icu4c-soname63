@@ -1,0 +1,2 @@
+pushd source ; make check; popd
+ 
