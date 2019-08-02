@@ -6,17 +6,15 @@
 #
 Name     : compat-icu4c-soname63
 Version  : 63.1
-Release  : 24
+Release  : 26
 URL      : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
 Source0  : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
-Source99 : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz.asc
+Source1 : http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz.asc
 Summary  : International Components for Unicode
 Group    : Development/Tools
 License  : NCSA
-Requires: compat-icu4c-soname63-data = %{version}-%{release}
 Requires: compat-icu4c-soname63-lib = %{version}-%{release}
 Requires: compat-icu4c-soname63-license = %{version}-%{release}
-Requires: compat-icu4c-soname63-man = %{version}-%{release}
 BuildRequires : doxygen
 BuildRequires : gcc-dev32
 BuildRequires : gcc-libgcc32
@@ -42,42 +40,9 @@ This package contains the runtime libraries for ICU. It does
 not contain any of the data files needed at runtime and present in the
 `icu' and `icu-locales` packages.
 
-%package data
-Summary: data components for the compat-icu4c-soname63 package.
-Group: Data
-
-%description data
-data components for the compat-icu4c-soname63 package.
-
-
-%package dev
-Summary: dev components for the compat-icu4c-soname63 package.
-Group: Development
-Requires: compat-icu4c-soname63-lib = %{version}-%{release}
-Requires: compat-icu4c-soname63-data = %{version}-%{release}
-Provides: compat-icu4c-soname63-devel = %{version}-%{release}
-Requires: compat-icu4c-soname63 = %{version}-%{release}
-Requires: compat-icu4c-soname63 = %{version}-%{release}
-
-%description dev
-dev components for the compat-icu4c-soname63 package.
-
-
-%package dev32
-Summary: dev32 components for the compat-icu4c-soname63 package.
-Group: Default
-Requires: compat-icu4c-soname63-lib32 = %{version}-%{release}
-Requires: compat-icu4c-soname63-data = %{version}-%{release}
-Requires: compat-icu4c-soname63-dev = %{version}-%{release}
-
-%description dev32
-dev32 components for the compat-icu4c-soname63 package.
-
-
 %package lib
 Summary: lib components for the compat-icu4c-soname63 package.
 Group: Libraries
-Requires: compat-icu4c-soname63-data = %{version}-%{release}
 Requires: compat-icu4c-soname63-license = %{version}-%{release}
 
 %description lib
@@ -87,7 +52,6 @@ lib components for the compat-icu4c-soname63 package.
 %package lib32
 Summary: lib32 components for the compat-icu4c-soname63 package.
 Group: Default
-Requires: compat-icu4c-soname63-data = %{version}-%{release}
 Requires: compat-icu4c-soname63-license = %{version}-%{release}
 
 %description lib32
@@ -102,14 +66,6 @@ Group: Default
 license components for the compat-icu4c-soname63 package.
 
 
-%package man
-Summary: man components for the compat-icu4c-soname63 package.
-Group: Default
-
-%description man
-man components for the compat-icu4c-soname63 package.
-
-
 %prep
 %setup -q -n icu
 pushd ..
@@ -120,8 +76,9 @@ popd
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1559760592
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1564704238
+export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$CFLAGS -fno-lto "
 export FFLAGS="$CFLAGS -fno-lto "
@@ -141,7 +98,7 @@ export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
 make  %{?_smp_mflags}
 popd
 %install
-export SOURCE_DATE_EPOCH=1559760592
+export SOURCE_DATE_EPOCH=1564704238
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63
 cp license.html %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63/license.html
@@ -157,239 +114,245 @@ popd
 pushd source
 %make_install
 popd
+## Remove excluded files
+rm -f %{buildroot}/usr/lib32/icu/63.1/Makefile.inc
+rm -f %{buildroot}/usr/lib32/icu/63.1/pkgdata.inc
+rm -f %{buildroot}/usr/lib32/icu/Makefile.inc
+rm -f %{buildroot}/usr/lib32/icu/current
+rm -f %{buildroot}/usr/lib32/icu/pkgdata.inc
+rm -f %{buildroot}/usr/lib64/icu/63.1/Makefile.inc
+rm -f %{buildroot}/usr/lib64/icu/63.1/pkgdata.inc
+rm -f %{buildroot}/usr/lib64/icu/Makefile.inc
+rm -f %{buildroot}/usr/lib64/icu/current
+rm -f %{buildroot}/usr/lib64/icu/pkgdata.inc
+rm -f %{buildroot}/usr/include/unicode/alphaindex.h
+rm -f %{buildroot}/usr/include/unicode/appendable.h
+rm -f %{buildroot}/usr/include/unicode/basictz.h
+rm -f %{buildroot}/usr/include/unicode/brkiter.h
+rm -f %{buildroot}/usr/include/unicode/bytestream.h
+rm -f %{buildroot}/usr/include/unicode/bytestrie.h
+rm -f %{buildroot}/usr/include/unicode/bytestriebuilder.h
+rm -f %{buildroot}/usr/include/unicode/calendar.h
+rm -f %{buildroot}/usr/include/unicode/caniter.h
+rm -f %{buildroot}/usr/include/unicode/casemap.h
+rm -f %{buildroot}/usr/include/unicode/char16ptr.h
+rm -f %{buildroot}/usr/include/unicode/chariter.h
+rm -f %{buildroot}/usr/include/unicode/choicfmt.h
+rm -f %{buildroot}/usr/include/unicode/coleitr.h
+rm -f %{buildroot}/usr/include/unicode/coll.h
+rm -f %{buildroot}/usr/include/unicode/compactdecimalformat.h
+rm -f %{buildroot}/usr/include/unicode/curramt.h
+rm -f %{buildroot}/usr/include/unicode/currpinf.h
+rm -f %{buildroot}/usr/include/unicode/currunit.h
+rm -f %{buildroot}/usr/include/unicode/datefmt.h
+rm -f %{buildroot}/usr/include/unicode/dbbi.h
+rm -f %{buildroot}/usr/include/unicode/dcfmtsym.h
+rm -f %{buildroot}/usr/include/unicode/decimfmt.h
+rm -f %{buildroot}/usr/include/unicode/docmain.h
+rm -f %{buildroot}/usr/include/unicode/dtfmtsym.h
+rm -f %{buildroot}/usr/include/unicode/dtintrv.h
+rm -f %{buildroot}/usr/include/unicode/dtitvfmt.h
+rm -f %{buildroot}/usr/include/unicode/dtitvinf.h
+rm -f %{buildroot}/usr/include/unicode/dtptngen.h
+rm -f %{buildroot}/usr/include/unicode/dtrule.h
+rm -f %{buildroot}/usr/include/unicode/edits.h
+rm -f %{buildroot}/usr/include/unicode/enumset.h
+rm -f %{buildroot}/usr/include/unicode/errorcode.h
+rm -f %{buildroot}/usr/include/unicode/fieldpos.h
+rm -f %{buildroot}/usr/include/unicode/filteredbrk.h
+rm -f %{buildroot}/usr/include/unicode/fmtable.h
+rm -f %{buildroot}/usr/include/unicode/format.h
+rm -f %{buildroot}/usr/include/unicode/fpositer.h
+rm -f %{buildroot}/usr/include/unicode/gender.h
+rm -f %{buildroot}/usr/include/unicode/gregocal.h
+rm -f %{buildroot}/usr/include/unicode/icudataver.h
+rm -f %{buildroot}/usr/include/unicode/icuplug.h
+rm -f %{buildroot}/usr/include/unicode/idna.h
+rm -f %{buildroot}/usr/include/unicode/listformatter.h
+rm -f %{buildroot}/usr/include/unicode/localpointer.h
+rm -f %{buildroot}/usr/include/unicode/locdspnm.h
+rm -f %{buildroot}/usr/include/unicode/locid.h
+rm -f %{buildroot}/usr/include/unicode/measfmt.h
+rm -f %{buildroot}/usr/include/unicode/measunit.h
+rm -f %{buildroot}/usr/include/unicode/measure.h
+rm -f %{buildroot}/usr/include/unicode/messagepattern.h
+rm -f %{buildroot}/usr/include/unicode/msgfmt.h
+rm -f %{buildroot}/usr/include/unicode/normalizer2.h
+rm -f %{buildroot}/usr/include/unicode/normlzr.h
+rm -f %{buildroot}/usr/include/unicode/nounit.h
+rm -f %{buildroot}/usr/include/unicode/numberformatter.h
+rm -f %{buildroot}/usr/include/unicode/numberrangeformatter.h
+rm -f %{buildroot}/usr/include/unicode/numfmt.h
+rm -f %{buildroot}/usr/include/unicode/numsys.h
+rm -f %{buildroot}/usr/include/unicode/parseerr.h
+rm -f %{buildroot}/usr/include/unicode/parsepos.h
+rm -f %{buildroot}/usr/include/unicode/platform.h
+rm -f %{buildroot}/usr/include/unicode/plurfmt.h
+rm -f %{buildroot}/usr/include/unicode/plurrule.h
+rm -f %{buildroot}/usr/include/unicode/ptypes.h
+rm -f %{buildroot}/usr/include/unicode/putil.h
+rm -f %{buildroot}/usr/include/unicode/rbbi.h
+rm -f %{buildroot}/usr/include/unicode/rbnf.h
+rm -f %{buildroot}/usr/include/unicode/rbtz.h
+rm -f %{buildroot}/usr/include/unicode/regex.h
+rm -f %{buildroot}/usr/include/unicode/region.h
+rm -f %{buildroot}/usr/include/unicode/reldatefmt.h
+rm -f %{buildroot}/usr/include/unicode/rep.h
+rm -f %{buildroot}/usr/include/unicode/resbund.h
+rm -f %{buildroot}/usr/include/unicode/schriter.h
+rm -f %{buildroot}/usr/include/unicode/scientificnumberformatter.h
+rm -f %{buildroot}/usr/include/unicode/search.h
+rm -f %{buildroot}/usr/include/unicode/selfmt.h
+rm -f %{buildroot}/usr/include/unicode/simpleformatter.h
+rm -f %{buildroot}/usr/include/unicode/simpletz.h
+rm -f %{buildroot}/usr/include/unicode/smpdtfmt.h
+rm -f %{buildroot}/usr/include/unicode/sortkey.h
+rm -f %{buildroot}/usr/include/unicode/std_string.h
+rm -f %{buildroot}/usr/include/unicode/strenum.h
+rm -f %{buildroot}/usr/include/unicode/stringoptions.h
+rm -f %{buildroot}/usr/include/unicode/stringpiece.h
+rm -f %{buildroot}/usr/include/unicode/stringtriebuilder.h
+rm -f %{buildroot}/usr/include/unicode/stsearch.h
+rm -f %{buildroot}/usr/include/unicode/symtable.h
+rm -f %{buildroot}/usr/include/unicode/tblcoll.h
+rm -f %{buildroot}/usr/include/unicode/timezone.h
+rm -f %{buildroot}/usr/include/unicode/tmunit.h
+rm -f %{buildroot}/usr/include/unicode/tmutamt.h
+rm -f %{buildroot}/usr/include/unicode/tmutfmt.h
+rm -f %{buildroot}/usr/include/unicode/translit.h
+rm -f %{buildroot}/usr/include/unicode/tzfmt.h
+rm -f %{buildroot}/usr/include/unicode/tznames.h
+rm -f %{buildroot}/usr/include/unicode/tzrule.h
+rm -f %{buildroot}/usr/include/unicode/tztrans.h
+rm -f %{buildroot}/usr/include/unicode/ubidi.h
+rm -f %{buildroot}/usr/include/unicode/ubiditransform.h
+rm -f %{buildroot}/usr/include/unicode/ubrk.h
+rm -f %{buildroot}/usr/include/unicode/ucal.h
+rm -f %{buildroot}/usr/include/unicode/ucasemap.h
+rm -f %{buildroot}/usr/include/unicode/ucat.h
+rm -f %{buildroot}/usr/include/unicode/uchar.h
+rm -f %{buildroot}/usr/include/unicode/ucharstrie.h
+rm -f %{buildroot}/usr/include/unicode/ucharstriebuilder.h
+rm -f %{buildroot}/usr/include/unicode/uchriter.h
+rm -f %{buildroot}/usr/include/unicode/uclean.h
+rm -f %{buildroot}/usr/include/unicode/ucnv.h
+rm -f %{buildroot}/usr/include/unicode/ucnv_cb.h
+rm -f %{buildroot}/usr/include/unicode/ucnv_err.h
+rm -f %{buildroot}/usr/include/unicode/ucnvsel.h
+rm -f %{buildroot}/usr/include/unicode/ucol.h
+rm -f %{buildroot}/usr/include/unicode/ucoleitr.h
+rm -f %{buildroot}/usr/include/unicode/uconfig.h
+rm -f %{buildroot}/usr/include/unicode/ucpmap.h
+rm -f %{buildroot}/usr/include/unicode/ucptrie.h
+rm -f %{buildroot}/usr/include/unicode/ucsdet.h
+rm -f %{buildroot}/usr/include/unicode/ucurr.h
+rm -f %{buildroot}/usr/include/unicode/udat.h
+rm -f %{buildroot}/usr/include/unicode/udata.h
+rm -f %{buildroot}/usr/include/unicode/udateintervalformat.h
+rm -f %{buildroot}/usr/include/unicode/udatpg.h
+rm -f %{buildroot}/usr/include/unicode/udisplaycontext.h
+rm -f %{buildroot}/usr/include/unicode/uenum.h
+rm -f %{buildroot}/usr/include/unicode/ufieldpositer.h
+rm -f %{buildroot}/usr/include/unicode/uformattable.h
+rm -f %{buildroot}/usr/include/unicode/ugender.h
+rm -f %{buildroot}/usr/include/unicode/uidna.h
+rm -f %{buildroot}/usr/include/unicode/uiter.h
+rm -f %{buildroot}/usr/include/unicode/uldnames.h
+rm -f %{buildroot}/usr/include/unicode/ulistformatter.h
+rm -f %{buildroot}/usr/include/unicode/uloc.h
+rm -f %{buildroot}/usr/include/unicode/ulocdata.h
+rm -f %{buildroot}/usr/include/unicode/umachine.h
+rm -f %{buildroot}/usr/include/unicode/umisc.h
+rm -f %{buildroot}/usr/include/unicode/umsg.h
+rm -f %{buildroot}/usr/include/unicode/umutablecptrie.h
+rm -f %{buildroot}/usr/include/unicode/unifilt.h
+rm -f %{buildroot}/usr/include/unicode/unifunct.h
+rm -f %{buildroot}/usr/include/unicode/unimatch.h
+rm -f %{buildroot}/usr/include/unicode/unirepl.h
+rm -f %{buildroot}/usr/include/unicode/uniset.h
+rm -f %{buildroot}/usr/include/unicode/unistr.h
+rm -f %{buildroot}/usr/include/unicode/unorm.h
+rm -f %{buildroot}/usr/include/unicode/unorm2.h
+rm -f %{buildroot}/usr/include/unicode/unum.h
+rm -f %{buildroot}/usr/include/unicode/unumberformatter.h
+rm -f %{buildroot}/usr/include/unicode/unumsys.h
+rm -f %{buildroot}/usr/include/unicode/uobject.h
+rm -f %{buildroot}/usr/include/unicode/upluralrules.h
+rm -f %{buildroot}/usr/include/unicode/uregex.h
+rm -f %{buildroot}/usr/include/unicode/uregion.h
+rm -f %{buildroot}/usr/include/unicode/ureldatefmt.h
+rm -f %{buildroot}/usr/include/unicode/urename.h
+rm -f %{buildroot}/usr/include/unicode/urep.h
+rm -f %{buildroot}/usr/include/unicode/ures.h
+rm -f %{buildroot}/usr/include/unicode/uscript.h
+rm -f %{buildroot}/usr/include/unicode/usearch.h
+rm -f %{buildroot}/usr/include/unicode/uset.h
+rm -f %{buildroot}/usr/include/unicode/usetiter.h
+rm -f %{buildroot}/usr/include/unicode/ushape.h
+rm -f %{buildroot}/usr/include/unicode/uspoof.h
+rm -f %{buildroot}/usr/include/unicode/usprep.h
+rm -f %{buildroot}/usr/include/unicode/ustdio.h
+rm -f %{buildroot}/usr/include/unicode/ustream.h
+rm -f %{buildroot}/usr/include/unicode/ustring.h
+rm -f %{buildroot}/usr/include/unicode/ustringtrie.h
+rm -f %{buildroot}/usr/include/unicode/utext.h
+rm -f %{buildroot}/usr/include/unicode/utf.h
+rm -f %{buildroot}/usr/include/unicode/utf16.h
+rm -f %{buildroot}/usr/include/unicode/utf32.h
+rm -f %{buildroot}/usr/include/unicode/utf8.h
+rm -f %{buildroot}/usr/include/unicode/utf_old.h
+rm -f %{buildroot}/usr/include/unicode/utmscale.h
+rm -f %{buildroot}/usr/include/unicode/utrace.h
+rm -f %{buildroot}/usr/include/unicode/utrans.h
+rm -f %{buildroot}/usr/include/unicode/utypes.h
+rm -f %{buildroot}/usr/include/unicode/uvernum.h
+rm -f %{buildroot}/usr/include/unicode/uversion.h
+rm -f %{buildroot}/usr/include/unicode/vtzone.h
+rm -f %{buildroot}/usr/lib32/libicudata.so
+rm -f %{buildroot}/usr/lib32/libicui18n.so
+rm -f %{buildroot}/usr/lib32/libicuio.so
+rm -f %{buildroot}/usr/lib32/libicutest.so
+rm -f %{buildroot}/usr/lib32/libicutu.so
+rm -f %{buildroot}/usr/lib32/libicuuc.so
+rm -f %{buildroot}/usr/lib32/pkgconfig/32icu-i18n.pc
+rm -f %{buildroot}/usr/lib32/pkgconfig/32icu-io.pc
+rm -f %{buildroot}/usr/lib32/pkgconfig/32icu-uc.pc
+rm -f %{buildroot}/usr/lib32/pkgconfig/icu-i18n.pc
+rm -f %{buildroot}/usr/lib32/pkgconfig/icu-io.pc
+rm -f %{buildroot}/usr/lib32/pkgconfig/icu-uc.pc
+rm -f %{buildroot}/usr/lib64/libicudata.so
+rm -f %{buildroot}/usr/lib64/libicui18n.so
+rm -f %{buildroot}/usr/lib64/libicuio.so
+rm -f %{buildroot}/usr/lib64/libicutest.so
+rm -f %{buildroot}/usr/lib64/libicutu.so
+rm -f %{buildroot}/usr/lib64/libicuuc.so
+rm -f %{buildroot}/usr/lib64/pkgconfig/icu-i18n.pc
+rm -f %{buildroot}/usr/lib64/pkgconfig/icu-io.pc
+rm -f %{buildroot}/usr/lib64/pkgconfig/icu-uc.pc
+rm -f %{buildroot}/usr/share/icu/63.1/LICENSE
+rm -f %{buildroot}/usr/share/icu/63.1/config/mh-linux
+rm -f %{buildroot}/usr/share/icu/63.1/install-sh
+rm -f %{buildroot}/usr/share/icu/63.1/mkinstalldirs
+rm -f %{buildroot}/usr/share/man/man1/derb.1
+rm -f %{buildroot}/usr/share/man/man1/genbrk.1
+rm -f %{buildroot}/usr/share/man/man1/gencfu.1
+rm -f %{buildroot}/usr/share/man/man1/gencnval.1
+rm -f %{buildroot}/usr/share/man/man1/gendict.1
+rm -f %{buildroot}/usr/share/man/man1/genrb.1
+rm -f %{buildroot}/usr/share/man/man1/icu-config.1
+rm -f %{buildroot}/usr/share/man/man1/makeconv.1
+rm -f %{buildroot}/usr/share/man/man1/pkgdata.1
+rm -f %{buildroot}/usr/share/man/man1/uconv.1
+rm -f %{buildroot}/usr/share/man/man8/genccode.8
+rm -f %{buildroot}/usr/share/man/man8/gencmn.8
+rm -f %{buildroot}/usr/share/man/man8/gensprep.8
+rm -f %{buildroot}/usr/share/man/man8/icupkg.8
 ## install_append content
 rm -rf %{buildroot}/usr/bin
 ## install_append end
 
 %files
 %defattr(-,root,root,-)
-%exclude /usr/lib32/icu/63.1/Makefile.inc
-%exclude /usr/lib32/icu/63.1/pkgdata.inc
-%exclude /usr/lib32/icu/Makefile.inc
-%exclude /usr/lib32/icu/current
-%exclude /usr/lib32/icu/pkgdata.inc
-%exclude /usr/lib64/icu/63.1/Makefile.inc
-%exclude /usr/lib64/icu/63.1/pkgdata.inc
-%exclude /usr/lib64/icu/Makefile.inc
-%exclude /usr/lib64/icu/current
-%exclude /usr/lib64/icu/pkgdata.inc
-
-%files data
-%defattr(-,root,root,-)
-%exclude /usr/share/icu/63.1/LICENSE
-%exclude /usr/share/icu/63.1/config/mh-linux
-%exclude /usr/share/icu/63.1/install-sh
-%exclude /usr/share/icu/63.1/mkinstalldirs
-
-%files dev
-%defattr(-,root,root,-)
-%exclude /usr/include/unicode/alphaindex.h
-%exclude /usr/include/unicode/appendable.h
-%exclude /usr/include/unicode/basictz.h
-%exclude /usr/include/unicode/brkiter.h
-%exclude /usr/include/unicode/bytestream.h
-%exclude /usr/include/unicode/bytestrie.h
-%exclude /usr/include/unicode/bytestriebuilder.h
-%exclude /usr/include/unicode/calendar.h
-%exclude /usr/include/unicode/caniter.h
-%exclude /usr/include/unicode/casemap.h
-%exclude /usr/include/unicode/char16ptr.h
-%exclude /usr/include/unicode/chariter.h
-%exclude /usr/include/unicode/choicfmt.h
-%exclude /usr/include/unicode/coleitr.h
-%exclude /usr/include/unicode/coll.h
-%exclude /usr/include/unicode/compactdecimalformat.h
-%exclude /usr/include/unicode/curramt.h
-%exclude /usr/include/unicode/currpinf.h
-%exclude /usr/include/unicode/currunit.h
-%exclude /usr/include/unicode/datefmt.h
-%exclude /usr/include/unicode/dbbi.h
-%exclude /usr/include/unicode/dcfmtsym.h
-%exclude /usr/include/unicode/decimfmt.h
-%exclude /usr/include/unicode/docmain.h
-%exclude /usr/include/unicode/dtfmtsym.h
-%exclude /usr/include/unicode/dtintrv.h
-%exclude /usr/include/unicode/dtitvfmt.h
-%exclude /usr/include/unicode/dtitvinf.h
-%exclude /usr/include/unicode/dtptngen.h
-%exclude /usr/include/unicode/dtrule.h
-%exclude /usr/include/unicode/edits.h
-%exclude /usr/include/unicode/enumset.h
-%exclude /usr/include/unicode/errorcode.h
-%exclude /usr/include/unicode/fieldpos.h
-%exclude /usr/include/unicode/filteredbrk.h
-%exclude /usr/include/unicode/fmtable.h
-%exclude /usr/include/unicode/format.h
-%exclude /usr/include/unicode/fpositer.h
-%exclude /usr/include/unicode/gender.h
-%exclude /usr/include/unicode/gregocal.h
-%exclude /usr/include/unicode/icudataver.h
-%exclude /usr/include/unicode/icuplug.h
-%exclude /usr/include/unicode/idna.h
-%exclude /usr/include/unicode/listformatter.h
-%exclude /usr/include/unicode/localpointer.h
-%exclude /usr/include/unicode/locdspnm.h
-%exclude /usr/include/unicode/locid.h
-%exclude /usr/include/unicode/measfmt.h
-%exclude /usr/include/unicode/measunit.h
-%exclude /usr/include/unicode/measure.h
-%exclude /usr/include/unicode/messagepattern.h
-%exclude /usr/include/unicode/msgfmt.h
-%exclude /usr/include/unicode/normalizer2.h
-%exclude /usr/include/unicode/normlzr.h
-%exclude /usr/include/unicode/nounit.h
-%exclude /usr/include/unicode/numberformatter.h
-%exclude /usr/include/unicode/numberrangeformatter.h
-%exclude /usr/include/unicode/numfmt.h
-%exclude /usr/include/unicode/numsys.h
-%exclude /usr/include/unicode/parseerr.h
-%exclude /usr/include/unicode/parsepos.h
-%exclude /usr/include/unicode/platform.h
-%exclude /usr/include/unicode/plurfmt.h
-%exclude /usr/include/unicode/plurrule.h
-%exclude /usr/include/unicode/ptypes.h
-%exclude /usr/include/unicode/putil.h
-%exclude /usr/include/unicode/rbbi.h
-%exclude /usr/include/unicode/rbnf.h
-%exclude /usr/include/unicode/rbtz.h
-%exclude /usr/include/unicode/regex.h
-%exclude /usr/include/unicode/region.h
-%exclude /usr/include/unicode/reldatefmt.h
-%exclude /usr/include/unicode/rep.h
-%exclude /usr/include/unicode/resbund.h
-%exclude /usr/include/unicode/schriter.h
-%exclude /usr/include/unicode/scientificnumberformatter.h
-%exclude /usr/include/unicode/search.h
-%exclude /usr/include/unicode/selfmt.h
-%exclude /usr/include/unicode/simpleformatter.h
-%exclude /usr/include/unicode/simpletz.h
-%exclude /usr/include/unicode/smpdtfmt.h
-%exclude /usr/include/unicode/sortkey.h
-%exclude /usr/include/unicode/std_string.h
-%exclude /usr/include/unicode/strenum.h
-%exclude /usr/include/unicode/stringoptions.h
-%exclude /usr/include/unicode/stringpiece.h
-%exclude /usr/include/unicode/stringtriebuilder.h
-%exclude /usr/include/unicode/stsearch.h
-%exclude /usr/include/unicode/symtable.h
-%exclude /usr/include/unicode/tblcoll.h
-%exclude /usr/include/unicode/timezone.h
-%exclude /usr/include/unicode/tmunit.h
-%exclude /usr/include/unicode/tmutamt.h
-%exclude /usr/include/unicode/tmutfmt.h
-%exclude /usr/include/unicode/translit.h
-%exclude /usr/include/unicode/tzfmt.h
-%exclude /usr/include/unicode/tznames.h
-%exclude /usr/include/unicode/tzrule.h
-%exclude /usr/include/unicode/tztrans.h
-%exclude /usr/include/unicode/ubidi.h
-%exclude /usr/include/unicode/ubiditransform.h
-%exclude /usr/include/unicode/ubrk.h
-%exclude /usr/include/unicode/ucal.h
-%exclude /usr/include/unicode/ucasemap.h
-%exclude /usr/include/unicode/ucat.h
-%exclude /usr/include/unicode/uchar.h
-%exclude /usr/include/unicode/ucharstrie.h
-%exclude /usr/include/unicode/ucharstriebuilder.h
-%exclude /usr/include/unicode/uchriter.h
-%exclude /usr/include/unicode/uclean.h
-%exclude /usr/include/unicode/ucnv.h
-%exclude /usr/include/unicode/ucnv_cb.h
-%exclude /usr/include/unicode/ucnv_err.h
-%exclude /usr/include/unicode/ucnvsel.h
-%exclude /usr/include/unicode/ucol.h
-%exclude /usr/include/unicode/ucoleitr.h
-%exclude /usr/include/unicode/uconfig.h
-%exclude /usr/include/unicode/ucpmap.h
-%exclude /usr/include/unicode/ucptrie.h
-%exclude /usr/include/unicode/ucsdet.h
-%exclude /usr/include/unicode/ucurr.h
-%exclude /usr/include/unicode/udat.h
-%exclude /usr/include/unicode/udata.h
-%exclude /usr/include/unicode/udateintervalformat.h
-%exclude /usr/include/unicode/udatpg.h
-%exclude /usr/include/unicode/udisplaycontext.h
-%exclude /usr/include/unicode/uenum.h
-%exclude /usr/include/unicode/ufieldpositer.h
-%exclude /usr/include/unicode/uformattable.h
-%exclude /usr/include/unicode/ugender.h
-%exclude /usr/include/unicode/uidna.h
-%exclude /usr/include/unicode/uiter.h
-%exclude /usr/include/unicode/uldnames.h
-%exclude /usr/include/unicode/ulistformatter.h
-%exclude /usr/include/unicode/uloc.h
-%exclude /usr/include/unicode/ulocdata.h
-%exclude /usr/include/unicode/umachine.h
-%exclude /usr/include/unicode/umisc.h
-%exclude /usr/include/unicode/umsg.h
-%exclude /usr/include/unicode/umutablecptrie.h
-%exclude /usr/include/unicode/unifilt.h
-%exclude /usr/include/unicode/unifunct.h
-%exclude /usr/include/unicode/unimatch.h
-%exclude /usr/include/unicode/unirepl.h
-%exclude /usr/include/unicode/uniset.h
-%exclude /usr/include/unicode/unistr.h
-%exclude /usr/include/unicode/unorm.h
-%exclude /usr/include/unicode/unorm2.h
-%exclude /usr/include/unicode/unum.h
-%exclude /usr/include/unicode/unumberformatter.h
-%exclude /usr/include/unicode/unumsys.h
-%exclude /usr/include/unicode/uobject.h
-%exclude /usr/include/unicode/upluralrules.h
-%exclude /usr/include/unicode/uregex.h
-%exclude /usr/include/unicode/uregion.h
-%exclude /usr/include/unicode/ureldatefmt.h
-%exclude /usr/include/unicode/urename.h
-%exclude /usr/include/unicode/urep.h
-%exclude /usr/include/unicode/ures.h
-%exclude /usr/include/unicode/uscript.h
-%exclude /usr/include/unicode/usearch.h
-%exclude /usr/include/unicode/uset.h
-%exclude /usr/include/unicode/usetiter.h
-%exclude /usr/include/unicode/ushape.h
-%exclude /usr/include/unicode/uspoof.h
-%exclude /usr/include/unicode/usprep.h
-%exclude /usr/include/unicode/ustdio.h
-%exclude /usr/include/unicode/ustream.h
-%exclude /usr/include/unicode/ustring.h
-%exclude /usr/include/unicode/ustringtrie.h
-%exclude /usr/include/unicode/utext.h
-%exclude /usr/include/unicode/utf.h
-%exclude /usr/include/unicode/utf16.h
-%exclude /usr/include/unicode/utf32.h
-%exclude /usr/include/unicode/utf8.h
-%exclude /usr/include/unicode/utf_old.h
-%exclude /usr/include/unicode/utmscale.h
-%exclude /usr/include/unicode/utrace.h
-%exclude /usr/include/unicode/utrans.h
-%exclude /usr/include/unicode/utypes.h
-%exclude /usr/include/unicode/uvernum.h
-%exclude /usr/include/unicode/uversion.h
-%exclude /usr/include/unicode/vtzone.h
-%exclude /usr/lib64/libicudata.so
-%exclude /usr/lib64/libicui18n.so
-%exclude /usr/lib64/libicuio.so
-%exclude /usr/lib64/libicutest.so
-%exclude /usr/lib64/libicutu.so
-%exclude /usr/lib64/libicuuc.so
-%exclude /usr/lib64/pkgconfig/icu-i18n.pc
-%exclude /usr/lib64/pkgconfig/icu-io.pc
-%exclude /usr/lib64/pkgconfig/icu-uc.pc
-
-%files dev32
-%defattr(-,root,root,-)
-%exclude /usr/lib32/libicudata.so
-%exclude /usr/lib32/libicui18n.so
-%exclude /usr/lib32/libicuio.so
-%exclude /usr/lib32/libicutest.so
-%exclude /usr/lib32/libicutu.so
-%exclude /usr/lib32/libicuuc.so
-%exclude /usr/lib32/pkgconfig/32icu-i18n.pc
-%exclude /usr/lib32/pkgconfig/32icu-io.pc
-%exclude /usr/lib32/pkgconfig/32icu-uc.pc
-%exclude /usr/lib32/pkgconfig/icu-i18n.pc
-%exclude /usr/lib32/pkgconfig/icu-io.pc
-%exclude /usr/lib32/pkgconfig/icu-uc.pc
 
 %files lib
 %defattr(-,root,root,-)
@@ -423,21 +386,4 @@ rm -rf %{buildroot}/usr/bin
 
 %files license
 %defattr(0644,root,root,0755)
-%exclude /usr/share/package-licenses/compat-icu4c-soname63/license.html
-
-%files man
-%defattr(0644,root,root,0755)
-%exclude /usr/share/man/man1/derb.1
-%exclude /usr/share/man/man1/genbrk.1
-%exclude /usr/share/man/man1/gencfu.1
-%exclude /usr/share/man/man1/gencnval.1
-%exclude /usr/share/man/man1/gendict.1
-%exclude /usr/share/man/man1/genrb.1
-%exclude /usr/share/man/man1/icu-config.1
-%exclude /usr/share/man/man1/makeconv.1
-%exclude /usr/share/man/man1/pkgdata.1
-%exclude /usr/share/man/man1/uconv.1
-%exclude /usr/share/man/man8/genccode.8
-%exclude /usr/share/man/man8/gencmn.8
-%exclude /usr/share/man/man8/gensprep.8
-%exclude /usr/share/man/man8/icupkg.8
+/usr/share/package-licenses/compat-icu4c-soname63/license.html
