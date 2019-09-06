@@ -6,7 +6,7 @@
 #
 Name     : compat-icu4c-soname63
 Version  : 63.2
-Release  : 27
+Release  : 28
 URL      : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
 Source1 : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz.asc
@@ -23,6 +23,8 @@ BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
 BuildRequires : pkg-config
 BuildRequires : sed
+# Suppress generation of debuginfo
+%global debug_package %{nil}
 
 %description
 ICU is a set of C and C++ libraries that provides robust and full-featured
@@ -77,7 +79,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1566604464
+export SOURCE_DATE_EPOCH=1568234909
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$CFLAGS -fno-lto "
@@ -91,14 +93,14 @@ popd
 pushd ../build32/source
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
-export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
-export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 %configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
 %install
-export SOURCE_DATE_EPOCH=1566604464
+export SOURCE_DATE_EPOCH=1568234909
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63
 cp license.html %{buildroot}/usr/share/package-licenses/compat-icu4c-soname63/license.html
@@ -308,6 +310,8 @@ rm -f %{buildroot}/usr/include/unicode/utypes.h
 rm -f %{buildroot}/usr/include/unicode/uvernum.h
 rm -f %{buildroot}/usr/include/unicode/uversion.h
 rm -f %{buildroot}/usr/include/unicode/vtzone.h
+rm -f %{buildroot}/usr/lib32/icu/63.2/Makefile.inc
+rm -f %{buildroot}/usr/lib32/icu/63.2/pkgdata.inc
 rm -f %{buildroot}/usr/lib32/libicudata.so
 rm -f %{buildroot}/usr/lib32/libicui18n.so
 rm -f %{buildroot}/usr/lib32/libicuio.so
@@ -320,6 +324,8 @@ rm -f %{buildroot}/usr/lib32/pkgconfig/32icu-uc.pc
 rm -f %{buildroot}/usr/lib32/pkgconfig/icu-i18n.pc
 rm -f %{buildroot}/usr/lib32/pkgconfig/icu-io.pc
 rm -f %{buildroot}/usr/lib32/pkgconfig/icu-uc.pc
+rm -f %{buildroot}/usr/lib64/icu/63.2/Makefile.inc
+rm -f %{buildroot}/usr/lib64/icu/63.2/pkgdata.inc
 rm -f %{buildroot}/usr/lib64/libicudata.so
 rm -f %{buildroot}/usr/lib64/libicui18n.so
 rm -f %{buildroot}/usr/lib64/libicuio.so
@@ -353,10 +359,6 @@ rm -rf %{buildroot}/usr/bin
 
 %files
 %defattr(-,root,root,-)
-/usr/lib32/icu/63.2/Makefile.inc
-/usr/lib32/icu/63.2/pkgdata.inc
-/usr/lib64/icu/63.2/Makefile.inc
-/usr/lib64/icu/63.2/pkgdata.inc
 
 %files lib
 %defattr(-,root,root,-)
