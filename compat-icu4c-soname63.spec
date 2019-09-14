@@ -6,7 +6,7 @@
 #
 Name     : compat-icu4c-soname63
 Version  : 63.2
-Release  : 28
+Release  : 29
 URL      : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
 Source0  : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
 Source1 : https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz.asc
